@@ -22,7 +22,7 @@ export interface FetchNotesResponse {
 }
 
 export const fetchNotes = async (params: FetchNotesParams): Promise<FetchNotesResponse> => {
-  const response = await axiosInstance.get(`/notes`, {
+  const response = await axiosInstance.get<FetchNotesResponse>(`/notes`, {
     params,
   });
   return response.data;
@@ -33,7 +33,7 @@ export const createNote = async (note: {
   content: string;
   tag: NoteTag;
 }): Promise<Note> => {
-  const response = await axiosInstance.post( "/notes",note);
+  const response = await axiosInstance.post<Note>( "/notes",note);
   return response.data;
 };
 

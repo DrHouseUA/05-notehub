@@ -19,12 +19,13 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
 
-  const { data, isFetching, isError } = useQuery<FetchNotesResponse>({
-    queryKey: ["notes", currentPage, searchQuery],
-    queryFn: () =>
-      fetchNotes({ page: currentPage, perPage: 12, search: searchQuery }),
-    placeholderData: keepPreviousData,
-  });
+  const { data, isPending, isLoading, isFetching, isError } =
+    useQuery<FetchNotesResponse>({
+      queryKey: ["notes", currentPage, searchQuery],
+      queryFn: () =>
+        fetchNotes({ page: currentPage, perPage: 12, search: searchQuery }),
+      placeholderData: keepPreviousData,
+    });
 
   const debouncedSearch = useDebouncedCallback((value: string) => {
     setCurrentPage(1);
@@ -53,8 +54,8 @@ const App = () => {
           Create note +
         </button>
       </header>
-      {isFetching && <Loader />}
-      {data && <NoteList notes={data.notes} />}
+      {(isPending || isFetching || isLoading) && <Loader />}
+      {data && data.totalPages > 1 && <NoteList notes={data.notes} />}
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
           <NoteForm onClose={() => setIsModalOpen(false)} />
