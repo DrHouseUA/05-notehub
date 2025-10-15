@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import css from "./NoteForm.module.css";
 import { createNote } from "../../services/noteService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { Note } from "../../types/note";
+import type { NoteTag } from "../../types/note";
 
 interface NoteFormProps {
   onClose: () => void;
@@ -12,7 +12,7 @@ interface NoteFormProps {
 interface FormValues {
   title: string;
   content: string;
-  tag: Note["tag"];
+  tag: NoteTag;
 }
 
 const schema = Yup.object({
