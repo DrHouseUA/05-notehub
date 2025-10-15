@@ -43,7 +43,7 @@ const App = () => {
         <SearchBox value={inputValue} onChange={handleInputChange} />
 
         {isError && <p>Something went wrong, please try again</p>}
-        {data && (
+        {data && data.totalPages > 1 && (
           <Pagination
             currentPage={currentPage}
             pageCount={data.totalPages}
@@ -55,7 +55,7 @@ const App = () => {
         </button>
       </header>
       {(isPending || isFetching || isLoading) && <Loader />}
-      {data && data.totalPages > 1 && <NoteList notes={data.notes} />}
+      {data && data.notes.length > 1 && <NoteList notes={data.notes} />}
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
           <NoteForm onClose={() => setIsModalOpen(false)} />
