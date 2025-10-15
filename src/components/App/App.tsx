@@ -1,0 +1,59 @@
+import { useState } from "react";
+import css from "./App.module.css";
+import SearchBox from "../SearchBox/SearchBox";
+import Pagination from "../Pagination/Pagination";
+import NoteList from "../NoteList/NoteList";
+import Modal from "../Modal/Modal";
+import NoteForm from "../NoteForm/NoteForm";
+import { useDebouncedCallback } from "use-debounce";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { fetchNotes, type FetchNotesResponse } from "../services/noteService";
+import Loader from "../Loader/Loader";
+
+const App = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [inputValue, setInputValue] = useState("");
+
+  const { data, isLoading, isError } = useQuery<FetchNotesResponse>({
+    queryKey: ["notes", currentPage, searchQuery],
+    queryFn: () =>
+      fetchNotes({ page: currentPage, perPage: 12, search: searchQuery }),
+    placeholderData: keepPreviousData,
+  });
+
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+    debouncedSearch(value);
+  };
+
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setCurentPage(1);
+    setSearchQuery(value);
+  }, 500);
+
+  const handlePageChange = () => {};
+
+  return (
+    <div className={css.app}>
+      <header className={css.toolbar}>
+        <SearchBox value={inputValue} onChange={handleInputChange} />
+        {isLoading && <Loader />}
+        {isError && <p>Something went wrong, please try again</p>}
+        <Pagination pageCount={currentPage} onPageChange={handlePageChange} />
+        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+          Create note +
+        </button>
+      </header>
+      {data && <NoteList notes={data.notes} />}
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <NoteForm onClose={() => setIsModalOpen(false)} />
+        </Modal>
+      )}
+    </div>
+  );
+};
+
+export default App;
