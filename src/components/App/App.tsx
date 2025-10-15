@@ -7,7 +7,10 @@ import Modal from "../Modal/Modal";
 import NoteForm from "../NoteForm/NoteForm";
 import { useDebouncedCallback } from "use-debounce";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { fetchNotes, type FetchNotesResponse } from "../services/noteService";
+import {
+  fetchNotes,
+  type FetchNotesResponse,
+} from "../../services/noteService";
 import Loader from "../Loader/Loader";
 
 const App = () => {
