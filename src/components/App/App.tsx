@@ -37,7 +37,6 @@ const App = () => {
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox value={inputValue} onChange={handleInputChange} />
-        {isFetching && <Loader />}
 
         {isError && <p>Something went wrong, please try again</p>}
         {data && (
@@ -51,6 +50,7 @@ const App = () => {
           Create note +
         </button>
       </header>
+      {isFetching && <Loader />}
       {data && <NoteList notes={data.notes} />}
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
