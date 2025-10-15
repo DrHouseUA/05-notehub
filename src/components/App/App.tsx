@@ -12,36 +12,41 @@ import Loader from "../Loader/Loader";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentPage, setCurentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [inputValue, setInputValue] = useState("");
 
-  const { data, isLoading, isError } = useQuery<FetchNotesResponse>({
+  const { data, isFetching, isError } = useQuery<FetchNotesResponse>({
     queryKey: ["notes", currentPage, searchQuery],
     queryFn: () =>
       fetchNotes({ page: currentPage, perPage: 12, search: searchQuery }),
     placeholderData: keepPreviousData,
   });
 
+  const debouncedSearch = useDebouncedCallback((value: string) => {
+    setCurrentPage(1);
+    setSearchQuery(value);
+  }, 500);
+
   const handleInputChange = (value: string) => {
     setInputValue(value);
     debouncedSearch(value);
   };
 
-  const debouncedSearch = useDebouncedCallback((value: string) => {
-    setCurentPage(1);
-    setSearchQuery(value);
-  }, 500);
-
-  const handlePageChange = () => {};
-
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
         <SearchBox value={inputValue} onChange={handleInputChange} />
-        {isLoading && <Loader />}
+        {isFetching && <Loader />}
+
         {isError && <p>Something went wrong, please try again</p>}
-        <Pagination pageCount={currentPage} onPageChange={handlePageChange} />
+        {data && (
+          <Pagination
+            currentPage={currentPage}
+            pageCount={data.totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
         <button className={css.button} onClick={() => setIsModalOpen(true)}>
           Create note +
         </button>

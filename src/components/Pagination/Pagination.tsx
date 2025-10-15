@@ -1,18 +1,23 @@
 import ReactPaginate from "react-paginate";
 import css from "./Pagination.module.css";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface PaginationProps {
+  currentPage: number;
   pageCount: number;
   onPageChange: (selected: number) => void;
 }
 
-const Pagination = ({ pageCount, onPageChange }: PaginationProps) => {
+const Pagination = ({
+  currentPage,
+  pageCount,
+  onPageChange,
+}: PaginationProps) => {
   if (pageCount <= 1) return null;
 
   return (
     <ReactPaginate
       pageCount={pageCount}
+      forcePage={currentPage - 1}
       pageRangeDisplayed={2}
       marginPagesDisplayed={1}
       onPageChange={({ selected }) => onPageChange(selected + 1)}
